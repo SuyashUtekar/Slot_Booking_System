@@ -6,7 +6,8 @@ import { toRegistrationPayload, validateAdminToken, validateStepOne, validateSte
 type Slot = { id:string; label:string; starts_at:string; ends_at:string; remaining_guests:number; status:string; selectable:boolean };
 type EventInfo = { name:string; timezone:string; max_guests_per_registration:number; count_organizer_as_guest:boolean };
 type Confirmation = { confirmation_code:string; full_name:string; slot_label:string; starts_at:string; ends_at:string; guest_count:number; created_at:string };
-const api = (path:string, init?:RequestInit) => fetch(path, { ...init, headers: { "Content-Type":"application/json", ...(init?.headers || {}) } });
+const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
+const api = (path:string, init?:RequestInit) => fetch(`${apiBaseUrl}${path}`, { ...init, headers: { "Content-Type":"application/json", ...(init?.headers || {}) } });
 const formatTime = (value:string) => new Intl.DateTimeFormat(undefined, { dateStyle:"medium", timeStyle:"short" }).format(new Date(value));
 
 function App() {

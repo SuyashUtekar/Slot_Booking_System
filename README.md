@@ -207,6 +207,49 @@ docker compose -f deploy/compose.yaml up --build
 
 Open `http://localhost:8080`. API docs are at `http://localhost:8000/docs`.
 
+## Free Public Hosting
+
+The repository includes [`render.yaml`](render.yaml) for a free prototype deployment:
+
+- Render free web service: FastAPI backend
+- Render free static site: React frontend
+- Supabase free PostgreSQL project: persistent database
+
+Render's free web service can sleep after inactivity and may take about a minute to wake. Its local filesystem is ephemeral, so the database is the source of truth and the Excel file is generated for download rather than treated as permanent storage. Render's free PostgreSQL service is temporary, so use Supabase for a longer-lived free database.
+
+### 1. Create the database
+
+Create a project at [Supabase](https://supabase.com/), open **Connect**, and copy a PostgreSQL connection string. Use the pooler connection if the direct connection is not reachable from your hosting service. URL-encode special characters in the database password and use the SQLAlchemy driver prefix:
+
+```text
+postgresql+psycopg://USER:PASSWORD@HOST:5432/postgres?sslmode=require
+```
+
+### 2. Push the repository to GitHub
+
+Create an empty GitHub repository and push this project. Do not commit `.env`, database passwords, or the admin token.
+
+### 3. Deploy with Render Blueprint
+
+In Render, choose **New > Blueprint**, select the GitHub repository, and apply `render.yaml`. Set these values when prompted:
+
+- `DATABASE_URL`: the Supabase connection string
+- `CORS_ORIGINS`: the final frontend URL, for example `https://slot-registration-frontend.onrender.com`
+- `DEFAULT_SLOT_DATE`: optional `YYYY-MM-DD`; leave empty to create tomorrow's slots
+- `VITE_API_BASE_URL`: the backend URL, for example `https://slot-registration-api.onrender.com`
+
+The static frontend variable is used during the build, so redeploy the frontend after changing it. After deployment, open the frontend URL and use `/#admin` for the admin console. The generated admin token is visible in the Render API service's environment settings.
+
+### 4. Verify the deployment
+
+```bash
+curl https://YOUR-API.onrender.com/health/ready
+```
+
+Then open the public frontend URL, submit a test registration, and confirm it appears in the admin console and Excel download. Delete test registrations from the Supabase database before sharing the link widely.
+
+This free setup is suitable for a demonstration or small personal event. It has sleeping services, provider quotas, and no production-grade uptime or backup guarantees. For a real high-traffic event, use an always-on API and a managed database with backups.
+
 ## API Endpoints
 
 ### Public

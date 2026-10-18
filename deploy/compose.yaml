@@ -1,0 +1,41 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: venue_registration
+      POSTGRES_USER: venue
+      POSTGRES_PASSWORD: venue
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U venue -d venue_registration"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  api:
+    build: {context: ../backend}
+    env_file: ../.env
+    environment:
+      DATABASE_URL: postgresql+psycopg://venue:venue@postgres:5432/venue_registration
+      EXPORT_PATH: /data/exports/registrations.xlsx
+    volumes: [../exports:/data/exports]
+    depends_on:
+      postgres: {condition: service_healthy}
+    ports: ["8000:8000"]
+  worker:
+    build: {context: ../backend}
+    command: ["python", "-m", "app.worker"]
+    env_file: ../.env
+    environment:
+      DATABASE_URL: postgresql+psycopg://venue:venue@postgres:5432/venue_registration
+      EXPORT_PATH: /data/exports/registrations.xlsx
+    volumes: [../exports:/data/exports]
+    depends_on:
+      postgres: {condition: service_healthy}
+  frontend:
+    build: {context: ../frontend}
+    depends_on: [api]
+    ports: ["8080:80"]
+volumes:
+  postgres_data:
+

@@ -18,7 +18,7 @@ services:
       - key: EVENT_TIMEZONE
         value: Asia/Kolkata
       - key: MAX_GUESTS_PER_REGISTRATION
-        value: "15"
+        value: "50"
       - key: DEFAULT_SLOT_START_TIME
         value: "10:00"
       - key: DEFAULT_SLOT_END_TIME

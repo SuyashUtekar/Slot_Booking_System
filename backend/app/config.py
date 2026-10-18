@@ -8,10 +8,10 @@ class Settings(BaseSettings):
     admin_token: str
     event_name: str = "Venue Visit Registration"
     event_timezone: str = "Asia/Kolkata"
-    max_guests_per_registration: int = 15
-    default_slot_start_time: str = "10:00"
-    default_slot_end_time: str = "18:00"
-    default_slot_capacity: int = 150
+    max_guests_per_registration: int
+    default_slot_start_time: str
+    default_slot_end_time: str
+    default_slot_capacity: int
     default_slot_date: str = ""
     export_path: str = "./exports/registrations.xlsx"
     cors_origins: str = "http://localhost:5173,http://localhost:8080"

@@ -77,7 +77,7 @@ class EventSettings(Base):
     __tablename__ = "event_settings"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, default=1)
-    max_guests_per_registration: Mapped[int] = mapped_column(Integer, default=15)
+    max_guests_per_registration: Mapped[int] = mapped_column(Integer)
     count_organizer_as_guest: Mapped[bool] = mapped_column(Boolean, default=True)
     timezone: Mapped[str] = mapped_column(String(80), default="Asia/Kolkata")
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
